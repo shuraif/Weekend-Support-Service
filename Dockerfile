@@ -20,4 +20,4 @@ COPY --from=build /app/target/Weekend-Support-Service-0.0.1-SNAPSHOT.jar /app.ja
 EXPOSE 8080
 
 # Run the app
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=prod", "/app.jar"]
