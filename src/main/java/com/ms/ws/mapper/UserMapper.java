@@ -26,7 +26,7 @@ public class UserMapper {
 
     User user = new User();
     user.setEmail(authRequest.getEmail());
-    user.setPasswordHash(ApiUtil.encrypt(authRequest.getPassword()));
+    user.setPasswordHash(ApiUtil.hashPassword(authRequest.getPassword()));
     user.setCreatedOn(new Date());
     user.setLastLogin(new Date());
     user.setName(authRequest.getName());

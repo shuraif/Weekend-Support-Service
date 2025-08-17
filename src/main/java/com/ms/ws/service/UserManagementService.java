@@ -15,10 +15,6 @@ public interface UserManagementService {
 
 	public ResponseEntity<AuthResponse> signIn(SignInRequest signinRequest) throws Exception;
 
-	public String decrypt(String encryptedString);
-
-	public String encrypt(String plainText);
-
 	ResponseEntity<?> getAllUsers();
 
 	List<User> getAll();

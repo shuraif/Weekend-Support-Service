@@ -68,7 +68,7 @@ public class UserManagementServiceImpl implements UserManagementService {
 			
 			User user = userRepo.findByEmail(signinRequest.getEmail());
 					
-			if(null != user && user.getPasswordHash().equals(ApiUtil.encrypt(signinRequest.getPassword()))) {
+			if(null != user && ApiUtil.matchPassword(signinRequest.getPassword(), user.getPasswordHash())) {
 
 					response = UserMapper.mapUserToAuthResponseMapper(user);
 					entity=new ResponseEntity<AuthResponse>(response, HttpStatus.OK);
@@ -89,17 +89,6 @@ public class UserManagementServiceImpl implements UserManagementService {
 		}
 
 		return entity;
-	}
-
-	public String decrypt(String encryptedString) {
-		
-		return ApiUtil.decrypt(encryptedString);
-	}
-
-	public String encrypt(String plainText) {
-	
-			return ApiUtil.encrypt(plainText);
-		
 	}
 
 	@Override

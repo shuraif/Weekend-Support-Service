@@ -13,10 +13,11 @@ public class WebConfig {
       @Override
       public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-            .allowedOrigins("http://localhost:5173",
-             "https://denali-weekend-support.netlify.app",
-             "https://*.denali-weekend-support.netlify.app"
-              )
+            .allowedOrigins(
+                "http://localhost:5173",
+                "https://denali-weekend-support.netlify.app"
+            )
+            .allowedOriginPatterns("https://*.denali-weekend-support.netlify.app")
             .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
             .allowedHeaders("*")
             .allowCredentials(true);
@@ -24,4 +25,3 @@ public class WebConfig {
     };
   }
 }
-

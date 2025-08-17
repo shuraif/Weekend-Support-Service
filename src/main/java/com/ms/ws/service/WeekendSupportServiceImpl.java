@@ -65,12 +65,9 @@ public class WeekendSupportServiceImpl implements WeekendSupportService {
   }
 
   @Override
-  public ResponseEntity<?> getSchedule() {
+  public ResponseEntity<?> generateSchedule() {
 
-    List<User> kites = userRepo.findAllByTeam("kites");
-    List<User> denali = userRepo.findAllByTeam("Denali");
-
-    Map<LocalDate, AssignmentPair> schedule = generateSchedule(kites, denali);
+    List<WeekendSchedule> schedule = generateShuffleSchedule();
 
     return new ResponseEntity<>(schedule, HttpStatus.OK);
   }
@@ -83,6 +80,10 @@ public class WeekendSupportServiceImpl implements WeekendSupportService {
 
     System.out.println("Before fetch: " + LocalTime.now());
     List<WeekendSchedule> weekendScheduleList = weekendScheduleRepo.findAll();
+    if(weekendScheduleList.isEmpty()) {
+      logger.info("No weekend schedules found, generating new schedule.");
+      weekendScheduleList = generateShuffleSchedule();
+    }
     System.out.println("after fetch: " + LocalTime.now());
     for (WeekendSchedule weekendSchedule : weekendScheduleList) {
       if ( null != weekendSchedule.getDate() && weekendSchedule.getDate().isAfter(now.minusYears(1)) && weekendSchedule.getDate().isBefore(now.plusYears(1))) {
@@ -92,7 +93,6 @@ public class WeekendSupportServiceImpl implements WeekendSupportService {
         schedule.put(weekendSchedule.getDate(), assignmentPair);
       }
     }
-
     return new ResponseEntity<>(schedule, HttpStatus.OK);
   }
 
@@ -144,8 +144,7 @@ public class WeekendSupportServiceImpl implements WeekendSupportService {
     }
 
     logActivity("SWAP", "Swapped schedules for dates: " + request.getDatesToSwap() +
-        ", Primary: " + (schedule1.getPrimary() != null ? schedule1.getPrimary().getName() : "None") +
-        ", Secondary: " + (schedule1.getSecondary() != null ? schedule1.getSecondary().getName() : "None"), userId);
+        ", Assignee Types: " + request.getSupportTypes() , userId);
     return fetchSchedule();
   }
 
@@ -222,8 +221,10 @@ public class WeekendSupportServiceImpl implements WeekendSupportService {
     return new ResponseEntity<>(userCounts, HttpStatus.OK);
   }
 
-  public  Map<LocalDate, AssignmentPair> generateSchedule(List<User> kites, List<User> denali) {
+  public  List<WeekendSchedule> generateShuffleSchedule() {
 
+    List<User> kites = userRepo.findAllByTeam("Kites");
+    List<User> denali = userRepo.findAllByTeam("Denali");
     LocalDate currentDate = LocalDate.now();
     LocalDate startOfTheYear = currentDate.withDayOfYear(1);
     System.out.println("Start of the year: " + startOfTheYear);
@@ -286,10 +287,10 @@ public class WeekendSupportServiceImpl implements WeekendSupportService {
             + " Secondary: " + schedule.get(date).getSecondary().getName());
       }
     }
-    weekendScheduleRepo.saveAll(weekendSchedules);
+     weekendScheduleRepo.saveAll(weekendSchedules);
 
     logActivity("GENERATE", "Generated weekend support schedule for the next two years", null);
-    return schedule;
+    return weekendSchedules;
   }
 
   private void logActivity(String action, String details,String userId) {
