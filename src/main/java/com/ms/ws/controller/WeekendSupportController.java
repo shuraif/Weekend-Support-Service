@@ -24,7 +24,7 @@ public class WeekendSupportController {
 
   @GetMapping("/generate-schedule")
   public ResponseEntity<?> test() {
-    return supportService.getSchedule();
+    return supportService.generateSchedule();
   }
 
   @GetMapping("/fetch-schedule")

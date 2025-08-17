@@ -10,7 +10,7 @@ public interface WeekendSupportService {
 
   ResponseEntity<Boolean> clearAllDocuments( String userId, String collectionName);
 
-  ResponseEntity<?>  getSchedule();
+  ResponseEntity<?>  generateSchedule();
 
   ResponseEntity<?> fetchSchedule();
 
